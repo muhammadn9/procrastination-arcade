@@ -1,0 +1,461 @@
+/* ========================================
+   PROCRASTINATION ARCADE - Main Styles
+   ======================================== */
+
+:root {
+    /* Color Palette */
+    --color-primary: #FF6B9D;
+    --color-secondary: #C06C84;
+    --color-tertiary: #6C5B7B;
+    --color-dark: #355C7D;
+    --color-bg: #1a1a2e;
+    --color-text: #ffffff;
+    --color-text-dim: #b0b0b0;
+    --color-success: #4ecca3;
+    --color-warning: #ffd93d;
+    --color-danger: #ff6b6b;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Typography */
+    --font-pixel: 'Press Start 2P', cursive;
+    --font-size-xs: 8px;
+    --font-size-sm: 10px;
+    --font-size-md: 12px;
+    --font-size-lg: 16px;
+    --font-size-xl: 24px;
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-pixel);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ========================================
+   Game Container
+   ======================================== */
+
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background-color: var(--color-bg);
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* CRT Scanline Effect */
+#game-canvas::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+}
+
+/* ========================================
+   HUD Overlay
+   ======================================== */
+
+.hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.hud-top {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+.hud-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    pointer-events: auto;
+}
+
+.hud-right {
+    display: flex;
+    gap: var(--spacing-sm);
+    pointer-events: auto;
+}
+
+.level-badge {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 3px solid var(--color-text);
+    font-size: var(--font-size-sm);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.xp-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.xp-bar-bg {
+    width: 150px;
+    height: 16px;
+    background-color: var(--color-dark);
+    border: 3px solid var(--color-text);
+    position: relative;
+    overflow: hidden;
+}
+
+.xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-success), var(--color-primary));
+    width: 0%;
+    transition: width 0.3s ease-out;
+}
+
+.xp-text {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-dim);
+    text-align: center;
+}
+
+.streak-counter {
+    background-color: var(--color-warning);
+    color: var(--color-dark);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 3px solid var(--color-text);
+    font-size: var(--font-size-md);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.customize-button {
+    background-color: var(--color-tertiary);
+    color: var(--color-text);
+    border: 3px solid var(--color-text);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-md);
+    cursor: pointer;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    font-family: var(--font-pixel);
+}
+
+.customize-button:hover {
+    background-color: var(--color-primary);
+}
+
+.customize-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.hud-bottom {
+    position: absolute;
+    bottom: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.active-task {
+    background-color: rgba(26, 26, 46, 0.95);
+    border: 3px solid var(--color-primary);
+    padding: var(--spacing-md);
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+.task-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.task-text {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    line-height: 1.5;
+}
+
+.interaction-prompt {
+    background-color: rgba(26, 26, 46, 0.95);
+    border: 3px solid var(--color-success);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-success);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+kbd {
+    background-color: var(--color-text);
+    color: var(--color-dark);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-family: var(--font-pixel);
+    font-size: var(--font-size-xs);
+}
+
+/* ========================================
+   Mobile Controls
+   ======================================== */
+
+.mobile-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: 15;
+}
+
+.joystick-container {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    left: var(--spacing-lg);
+    width: 120px;
+    height: 120px;
+    pointer-events: auto;
+}
+
+.joystick-base {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(108, 91, 123, 0.5);
+    border: 3px solid var(--color-tertiary);
+    border-radius: 50%;
+}
+
+.joystick-stick {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background-color: var(--color-primary);
+    border: 3px solid var(--color-text);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.1s ease-out;
+}
+
+.interact-button {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 80px;
+    height: 80px;
+    background-color: var(--color-success);
+    border: 3px solid var(--color-text);
+    border-radius: 50%;
+    font-family: var(--font-pixel);
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.interact-button:disabled {
+    background-color: var(--color-dark);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.interact-button:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   Modal Overlay
+   ======================================== */
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    padding: var(--spacing-md);
+}
+
+.modal-content {
+    background-color: var(--color-bg);
+    border: 4px solid var(--color-primary);
+    padding: var(--spacing-lg);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
+}
+
+.modal-title {
+    font-size: var(--font-size-lg);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.modal-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.btn {
+    font-family: var(--font-pixel);
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 3px solid var(--color-text);
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    cursor: pointer;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    transition: all 0.1s;
+}
+
+.btn:hover {
+    background-color: var(--color-primary);
+}
+
+.btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+}
+
+.btn-success {
+    background-color: var(--color-success);
+}
+
+.btn-warning {
+    background-color: var(--color-warning);
+    color: var(--color-dark);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+    .xp-bar-bg {
+        width: 100px;
+    }
+
+    .hud-top {
+        padding: var(--spacing-sm);
+    }
+
+    .modal-content {
+        padding: var(--spacing-md);
+    }
+
+    .modal-title {
+        font-size: var(--font-size-md);
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-controls {
+        display: none !important;
+    }
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+*:focus {
+    outline: 3px solid var(--color-warning);
+    outline-offset: 2px;
+}
+
+button:focus-visible {
+    outline: 3px solid var(--color-warning);
+}
