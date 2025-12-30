@@ -117,9 +117,16 @@ const Loader = {
 
     // Called when loading is complete
     onLoadComplete() {
+        console.log('📦 Loader: onLoadComplete called');
+        console.log('📦 Loader: Game exists NOW?', typeof window.Game !== 'undefined', window.Game);
+
         setTimeout(() => {
             const loadingScreen = document.getElementById('loading-screen');
             const gameContainer = document.getElementById('game-container');
+
+            console.log('📦 Loader: Hiding loading screen...');
+            console.log('Loading screen element:', loadingScreen);
+            console.log('Game container element:', gameContainer);
 
             loadingScreen.classList.add('fade-out');
 
@@ -127,19 +134,36 @@ const Loader = {
                 loadingScreen.style.display = 'none';
                 gameContainer.classList.remove('hidden');
 
-                // Start the game
-                if (window.Game) {
-                    Game.init();
+                console.log('📦 Loader: Loading screen hidden, game container visible');
+                console.log('Game container visible:', !gameContainer.classList.contains('hidden'));
+                console.log('📦 Loader: Game exists AFTER setTimeout?', typeof window.Game !== 'undefined', window.Game);
+                console.log('📦 Loader: Checking window scope...', Object.keys(window).filter(k => k === 'Game'));
+
+                // Start the game - use window.Game explicitly
+                if (typeof window.Game !== 'undefined' && typeof window.Game.init === 'function') {
+                    console.log('🎮 Loader: Calling window.Game.init()...');
+                    try {
+                        window.Game.init();
+                        console.log('✅ Loader: Game.init() completed');
+                    } catch (error) {
+                        console.error('❌ Loader: Error calling Game.init():', error);
+                    }
+                } else {
+                    console.error('❌ Loader: Game object not found or init not a function!');
+                    console.error('window.Game:', window.Game);
+                    console.error('typeof Game.init:', window.Game ? typeof window.Game.init : 'Game is undefined');
+
+                    // Emergency: Try to find Game in global scope
+                    console.error('Searching for Game...', typeof Game !== 'undefined' ? 'Found as Game' : 'Not found');
+                    if (typeof Game !== 'undefined') {
+                        console.log('🔧 Emergency: Using Game from local scope');
+                        Game.init();
+                    }
                 }
             }, 500);
         }, 300);
     }
 };
 
-// Start loading when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => Loader.init());
-} else {
-    Loader.init();
-}
-
+// Don't auto-start - wait for explicit call
+console.log('✅ Loader module loaded');

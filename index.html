@@ -91,6 +91,35 @@
     <script src="js/world.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/game.js"></script>
+
+    <!-- Initialize after all scripts loaded -->
+    <script>
+        console.log('🚀 Initialization script running...');
+        console.log('Document ready state:', document.readyState);
+        console.log('Game available:', typeof Game !== 'undefined');
+        console.log('Loader available:', typeof Loader !== 'undefined');
+
+        // Start loading sequence
+        function startGame() {
+            console.log('🎮 Starting game initialization...');
+            if (typeof Loader !== 'undefined') {
+                console.log('✅ Loader found, calling init()...');
+                Loader.init();
+            } else {
+                console.error('❌ Loader not available!');
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('✅ DOM ready, starting game...');
+                startGame();
+            });
+        } else {
+            console.log('✅ DOM already ready, starting game...');
+            startGame();
+        }
+    </script>
 </body>
 </html>
 

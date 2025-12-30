@@ -51,6 +51,12 @@ class Player {
 
     // Draw player
     draw(ctx) {
+        // Debug output (only log once)
+        if (!this._drawLogged) {
+            console.log('👤 Drawing player at:', this.x, this.y, 'Color:', this.color);
+            this._drawLogged = true;
+        }
+
         // Draw player sprite (placeholder for now)
         ctx.fillStyle = this.color;
         ctx.fillRect(
