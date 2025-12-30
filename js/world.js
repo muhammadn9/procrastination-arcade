@@ -4,13 +4,13 @@
 // ========================================
 
 class World {
-    constructor() {
+    constructor(canvasWidth, canvasHeight) {
         this.objects = [];
-        this.setupObjects();
+        this.setupObjects(canvasWidth, canvasHeight);
     }
 
     // Setup interactive objects in the world
-    setupObjects() {
+    setupObjects(canvasWidth, canvasHeight) {
         // Task Machine (top-left area)
         this.objects.push({
             id: 'taskMachine',
@@ -28,7 +28,7 @@ class World {
         this.objects.push({
             id: 'mirror',
             name: 'Mirror',
-            x: Game.canvas.width - 150,
+            x: canvasWidth - 150,
             y: 150,
             width: 64,
             height: 64,
@@ -41,8 +41,8 @@ class World {
         this.objects.push({
             id: 'roulette',
             name: 'Roulette Wheel',
-            x: Game.canvas.width / 2,
-            y: Game.canvas.height / 2,
+            x: canvasWidth / 2,
+            y: canvasHeight / 2,
             width: 64,
             height: 64,
             color: '#ffd93d',
@@ -54,8 +54,8 @@ class World {
         this.objects.push({
             id: 'couch',
             name: 'Couch',
-            x: Game.canvas.width / 2,
-            y: Game.canvas.height - 100,
+            x: canvasWidth / 2,
+            y: canvasHeight - 100,
             width: 80,
             height: 48,
             color: '#355C7D',

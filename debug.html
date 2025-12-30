@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        #status {
+            padding: 20px;
+            background: #2a2a3e;
+            border: 2px solid #4a4a5e;
+        }
+        .error { color: #ff6b6b; }
+        .success { color: #4ecca3; }
+        .info { color: #ffd93d; }
+    </style>
+</head>
+<body>
+    <div id="status">
+        <h2>Procrastination Arcade - Debug Status</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+
+        function addLog(message, type = 'info') {
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = '• ' + message;
+            log.appendChild(p);
+        }
+
+        addLog('Starting diagnostics...', 'info');
+
+        // Test script loading
+        const scripts = [
+            'js/storage.js',
+            'js/dialogue.js',
+            'js/tasks.js',
+            'js/loader.js',
+            'js/controls.js',
+            'js/player.js',
+            'js/world.js',
+            'js/ui.js',
+            'js/game.js'
+        ];
+
+        scripts.forEach((script, index) => {
+            setTimeout(() => {
+                const scriptEl = document.createElement('script');
+                scriptEl.src = script;
+                scriptEl.onload = () => addLog(`✓ ${script} loaded`, 'success');
+                scriptEl.onerror = () => addLog(`✗ ${script} FAILED`, 'error');
+                document.body.appendChild(scriptEl);
+
+                // After all scripts loaded, test objects
+                if (index === scripts.length - 1) {
+                    setTimeout(() => {
+                        addLog('Checking objects...', 'info');
+                        addLog(`Storage: ${typeof Storage !== 'undefined' ? '✓' : '✗'}`, typeof Storage !== 'undefined' ? 'success' : 'error');
+                        addLog(`Dialogue: ${typeof Dialogue !== 'undefined' ? '✓' : '✗'}`, typeof Dialogue !== 'undefined' ? 'success' : 'error');
+                        addLog(`Tasks: ${typeof Tasks !== 'undefined' ? '✓' : '✗'}`, typeof Tasks !== 'undefined' ? 'success' : 'error');
+                        addLog(`Loader: ${typeof Loader !== 'undefined' ? '✓' : '✗'}`, typeof Loader !== 'undefined' ? 'success' : 'error');
+                        addLog(`Controls: ${typeof Controls !== 'undefined' ? '✓' : '✗'}`, typeof Controls !== 'undefined' ? 'success' : 'error');
+                        addLog(`Player: ${typeof Player !== 'undefined' ? '✓' : '✗'}`, typeof Player !== 'undefined' ? 'success' : 'error');
+                        addLog(`World: ${typeof World !== 'undefined' ? '✓' : '✗'}`, typeof World !== 'undefined' ? 'success' : 'error');
+                        addLog(`UI: ${typeof UI !== 'undefined' ? '✓' : '✗'}`, typeof UI !== 'undefined' ? 'success' : 'error');
+                        addLog(`Game: ${typeof Game !== 'undefined' ? '✓' : '✗'}`, typeof Game !== 'undefined' ? 'success' : 'error');
+
+                        addLog('Check browser console (F12) for any errors', 'info');
+                    }, 1000);
+                }
+            }, index * 100);
+        });
+    </script>
+</body>
+</html>
+

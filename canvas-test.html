@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        canvas {
+            border: 3px solid #FF6B9D;
+            background: #2a2a3e;
+        }
+        p {
+            color: white;
+            font-family: monospace;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="test-canvas" width="800" height="600"></canvas>
+    <p id="status">Testing canvas...</p>
+
+    <script>
+        const canvas = document.getElementById('test-canvas');
+        const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status');
+
+        // Draw background
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw grid
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 32) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 32) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+
+        // Draw player
+        ctx.fillStyle = '#FF6B9D';
+        ctx.fillRect(384, 284, 32, 32);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(384, 284, 32, 32);
+
+        // Draw some objects
+        const objects = [
+            { x: 150, y: 150, color: '#C06C84', label: 'TASK MACHINE' },
+            { x: 650, y: 150, color: '#6C5B7B', label: 'MIRROR' },
+            { x: 400, y: 300, color: '#ffd93d', label: 'ROULETTE' },
+            { x: 400, y: 500, color: '#355C7D', label: 'COUCH' }
+        ];
+
+        objects.forEach(obj => {
+            ctx.fillStyle = obj.color;
+            ctx.fillRect(obj.x - 32, obj.y - 32, 64, 64);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(obj.x - 32, obj.y - 32, 64, 64);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '8px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(obj.label, obj.x, obj.y - 40);
+        });
+
+        status.textContent = '✅ Canvas is working! This is what your game should look like.';
+        status.style.color = '#4ecca3';
+    </script>
+</body>
+</html>
+
