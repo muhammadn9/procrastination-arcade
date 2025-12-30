@@ -15,29 +15,53 @@ const Game = {
 
     // Initialize game
     init() {
+        console.log('🎮 Game.init() called');
+
         this.canvas = document.getElementById('game-canvas');
+        console.log('Canvas element:', this.canvas);
+
+        if (!this.canvas) {
+            console.error('❌ Canvas element not found!');
+            return;
+        }
+
         this.ctx = this.canvas.getContext('2d');
+        console.log('Canvas context:', this.ctx);
 
         // Setup canvas
         this.resizeCanvas();
+        console.log('Canvas resized:', this.canvas.width, 'x', this.canvas.height);
+
         window.addEventListener('resize', () => this.resizeCanvas());
 
         // Initialize systems
-        Controls.init();
-        UI.init();
+        try {
+            console.log('Initializing Controls...');
+            Controls.init();
 
-        // Create player at center
-        this.player = new Player(this.canvas.width / 2, this.canvas.height / 2);
+            console.log('Initializing UI...');
+            UI.init();
 
-        // Create world
-        this.world = new World();
+            // Create player at center
+            console.log('Creating player...');
+            this.player = new Player(this.canvas.width / 2, this.canvas.height / 2);
+            console.log('Player created at:', this.player.x, this.player.y);
 
-        // Start game loop
-        this.running = true;
-        this.lastTime = performance.now();
-        this.gameLoop(this.lastTime);
+            // Create world with canvas dimensions
+            console.log('Creating world...');
+            this.world = new World(this.canvas.width, this.canvas.height);
+            console.log('World created with', this.world.objects.length, 'objects');
 
-        console.log('🎮 Procrastination Arcade initialized!');
+            // Start game loop
+            this.running = true;
+            this.lastTime = performance.now();
+            console.log('Starting game loop...');
+            this.gameLoop(this.lastTime);
+
+            console.log('✅ Procrastination Arcade initialized!');
+        } catch (error) {
+            console.error('❌ Error during initialization:', error);
+        }
     },
 
     // Resize canvas to fit window
