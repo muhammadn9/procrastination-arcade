@@ -1,145 +1,145 @@
 // ========================================
-}
-    Loader.init();
-} else {
-    document.addEventListener('DOMContentLoaded', () => Loader.init());
-if (document.readyState === 'loading') {
-// Start loading when DOM is ready
+// ASSET LOADER
+// Handles sprite loading with progress tracking
+// ========================================
 
-};
-    }
-        }, 300);
-            }, 500);
-                }
-                    Game.init();
-                if (window.Game) {
-                // Start the game
+const Loader = {
+    assets: {
+        // Placeholder sprites - will be replaced with actual pixel art
+        playerSprite: null,
+        taskMachineSprite: null,
+        mirrorSprite: null,
+        rouletteSprite: null,
+        couchSprite: null
+    },
 
-                gameContainer.classList.remove('hidden');
-                loadingScreen.style.display = 'none';
-            setTimeout(() => {
+    totalAssets: 0,
+    loadedAssets: 0,
+    loadingComplete: false,
+
+    // Initialize and load all assets
+    async init() {
+        this.totalAssets = 5; // Number of sprite sheets to load
+        this.updateProgress(0);
+
+        // For now, we'll use placeholder colored rectangles
+        // Later, replace with actual sprite loading
+        await this.loadPlaceholders();
+
+        this.loadingComplete = true;
+        this.onLoadComplete();
+    },
+
+    // Load placeholder assets (for MVP - replace with real sprites later)
+    async loadPlaceholders() {
+        // Simulate loading time for each asset
+        const loadDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Player placeholder
+        await loadDelay(200);
+        this.assets.playerSprite = this.createPlaceholder(32, 32, '#FF6B9D');
+        this.loadedAssets++;
+        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
+
+        // Task Machine placeholder
+        await loadDelay(200);
+        this.assets.taskMachineSprite = this.createPlaceholder(64, 64, '#C06C84');
+        this.loadedAssets++;
+        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
+
+        // Mirror placeholder
+        await loadDelay(200);
+        this.assets.mirrorSprite = this.createPlaceholder(64, 64, '#6C5B7B');
+        this.loadedAssets++;
+        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
+
+        // Roulette placeholder
+        await loadDelay(200);
+        this.assets.rouletteSprite = this.createPlaceholder(64, 64, '#ffd93d');
+        this.loadedAssets++;
+        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
+
+        // Couch placeholder
+        await loadDelay(200);
+        this.assets.couchSprite = this.createPlaceholder(80, 48, '#355C7D');
+        this.loadedAssets++;
+        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
+    },
+
+    // Create colored placeholder canvas
+    createPlaceholder(width, height, color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        // Draw colored rectangle with border
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, width - 2, height - 2);
+
+        return canvas;
+    },
+
+    // Load actual image sprite (for later use with real pixel art)
+    loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+    },
+
+    // Update loading progress
+    updateProgress(percentage) {
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingText = document.getElementById('loading-text');
+
+        if (loadingBar) {
+            loadingBar.style.width = percentage + '%';
+        }
+
+        if (loadingText) {
+            const messages = [
+                'Loading pixels...',
+                'Initializing procrastination...',
+                'Spawning tasks...',
+                'Calibrating guilt...',
+                'Ready to avoid work!'
+            ];
+            const messageIndex = Math.min(Math.floor(percentage / 20), messages.length - 1);
+            loadingText.textContent = messages[messageIndex];
+        }
+    },
+
+    // Called when loading is complete
+    onLoadComplete() {
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const gameContainer = document.getElementById('game-container');
 
             loadingScreen.classList.add('fade-out');
 
-            const gameContainer = document.getElementById('game-container');
-            const loadingScreen = document.getElementById('loading-screen');
-        setTimeout(() => {
-    onLoadComplete() {
-    // Called when loading is complete
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                gameContainer.classList.remove('hidden');
 
-    },
-        }
-            loadingText.textContent = messages[messageIndex];
-            const messageIndex = Math.min(Math.floor(percentage / 20), messages.length - 1);
-            ];
-                'Ready to avoid work!'
-                'Calibrating guilt...',
-                'Spawning tasks...',
-                'Initializing procrastination...',
-                'Loading pixels...',
-            const messages = [
-        if (loadingText) {
+                // Start the game
+                if (window.Game) {
+                    Game.init();
+                }
+            }, 500);
+        }, 300);
+    }
+};
 
-        }
-            loadingBar.style.width = percentage + '%';
-        if (loadingBar) {
-
-        const loadingText = document.getElementById('loading-text');
-        const loadingBar = document.getElementById('loading-bar');
-    updateProgress(percentage) {
-    // Update loading progress
-
-    },
-        });
-            img.src = src;
-            img.onerror = reject;
-            img.onload = () => resolve(img);
-            const img = new Image();
-        return new Promise((resolve, reject) => {
-    loadImage(src) {
-    // Load actual image sprite (for later use with real pixel art)
-
-    },
-        return canvas;
-
-        ctx.strokeRect(1, 1, width - 2, height - 2);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#ffffff';
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = color;
-        // Draw colored rectangle with border
-
-        const ctx = canvas.getContext('2d');
-        canvas.height = height;
-        canvas.width = width;
-        const canvas = document.createElement('canvas');
-    createPlaceholder(width, height, color) {
-    // Create colored placeholder canvas
-
-    },
-        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
-        this.loadedAssets++;
-        this.assets.couchSprite = this.createPlaceholder(80, 48, '#355C7D');
-        await loadDelay(200);
-        // Couch placeholder
-
-        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
-        this.loadedAssets++;
-        this.assets.rouletteSprite = this.createPlaceholder(64, 64, '#ffd93d');
-        await loadDelay(200);
-        // Roulette placeholder
-
-        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
-        this.loadedAssets++;
-        this.assets.mirrorSprite = this.createPlaceholder(64, 64, '#6C5B7B');
-        await loadDelay(200);
-        // Mirror placeholder
-
-        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
-        this.loadedAssets++;
-        this.assets.taskMachineSprite = this.createPlaceholder(64, 64, '#C06C84');
-        await loadDelay(200);
-        // Task Machine placeholder
-
-        this.updateProgress((this.loadedAssets / this.totalAssets) * 100);
-        this.loadedAssets++;
-        this.assets.playerSprite = this.createPlaceholder(32, 32, '#FF6B9D');
-        await loadDelay(200);
-        // Player placeholder
-
-        const loadDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        // Simulate loading time for each asset
-    async loadPlaceholders() {
-    // Load placeholder assets (for MVP - replace with real sprites later)
-
-    },
-        this.onLoadComplete();
-        this.loadingComplete = true;
-
-        await this.loadPlaceholders();
-        // Later, replace with actual sprite loading
-        // For now, we'll use placeholder colored rectangles
-
-        this.updateProgress(0);
-        this.totalAssets = 5; // Number of sprite sheets to load
-    async init() {
-    // Initialize and load all assets
-
-    loadingComplete: false,
-    loadedAssets: 0,
-    totalAssets: 0,
-
-    },
-        couchSprite: null
-        rouletteSprite: null,
-        mirrorSprite: null,
-        taskMachineSprite: null,
-        playerSprite: null,
-        // Placeholder sprites - will be replaced with actual pixel art
-    assets: {
-const Loader = {
-
-// ========================================
-// Handles sprite loading with progress tracking
-// ASSET LOADER
+// Start loading when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => Loader.init());
+} else {
+    Loader.init();
+}
 
