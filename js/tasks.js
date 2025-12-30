@@ -81,7 +81,7 @@ const Tasks = {
             { text: "Delete 5 unused apps", duration: "⏱️", unlockLevel: 1 },
             { text: "Clear your browser tabs", duration: "⏱️", unlockLevel: 1 },
             { text: "Make a quick shopping list", duration: "⏱️", unlockLevel: 1 }
-        }
+        ]
     },
 
     // Get all available tasks (base + custom)

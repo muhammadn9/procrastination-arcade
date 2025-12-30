@@ -67,16 +67,27 @@ const Game = {
     // Resize canvas to fit window
     resizeCanvas() {
         const container = document.getElementById('game-container');
-        this.canvas.width = container.clientWidth;
-        this.canvas.height = container.clientHeight;
 
-        // Adjust for high DPI displays
-        const dpr = window.devicePixelRatio || 1;
-        this.canvas.style.width = container.clientWidth + 'px';
-        this.canvas.style.height = container.clientHeight + 'px';
+        if (!container) {
+            console.error('❌ Game container not found!');
+            return;
+        }
+
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        // Set canvas internal size
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        // Set canvas display size (same as internal for now, simpler)
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
+
+        console.log('Canvas resized to:', width, 'x', height);
 
         if (this.world) {
-            this.world.resize(this.canvas.width, this.canvas.height);
+            this.world.resize(width, height);
         }
     },
 
@@ -124,6 +135,14 @@ const Game = {
 
     // Draw game
     draw() {
+        // Debug: Check if draw is being called
+        if (!this._drawLogged) {
+            console.log('🎨 Draw method called');
+            console.log('Canvas dimensions:', this.canvas.width, 'x', this.canvas.height);
+            console.log('Context:', this.ctx);
+            this._drawLogged = true;
+        }
+
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -319,6 +338,12 @@ const Game = {
     }
 };
 
+console.log('✅ Game object created:', typeof Game, Game);
+
+// Explicitly add to window to ensure global access
+window.Game = Game;
+console.log('✅ Game added to window:', typeof window.Game, window.Game);
+
 // Add spin animation to styles dynamically
 const style = document.createElement('style');
 style.textContent = `
@@ -329,3 +354,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+console.log('✅ game.js fully loaded');

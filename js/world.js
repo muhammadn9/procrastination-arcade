@@ -71,26 +71,31 @@ class World {
 
     // Draw world
     draw(ctx) {
+        // Get canvas dimensions from the canvas element
+        const canvas = ctx.canvas;
+        const width = canvas.width;
+        const height = canvas.height;
+
         // Draw floor
         ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, Game.canvas.width, Game.canvas.height);
+        ctx.fillRect(0, 0, width, height);
 
         // Draw grid pattern
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
         ctx.lineWidth = 1;
         const gridSize = 32;
 
-        for (let x = 0; x < Game.canvas.width; x += gridSize) {
+        for (let x = 0; x < width; x += gridSize) {
             ctx.beginPath();
             ctx.moveTo(x, 0);
-            ctx.lineTo(x, Game.canvas.height);
+            ctx.lineTo(x, height);
             ctx.stroke();
         }
 
-        for (let y = 0; y < Game.canvas.height; y += gridSize) {
+        for (let y = 0; y < height; y += gridSize) {
             ctx.beginPath();
             ctx.moveTo(0, y);
-            ctx.lineTo(Game.canvas.width, y);
+            ctx.lineTo(width, y);
             ctx.stroke();
         }
 

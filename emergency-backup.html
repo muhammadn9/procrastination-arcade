@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procrastination Arcade - Emergency Backup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a2e;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+        #game-canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        .hud {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 10px;
+            text-shadow: 2px 2px 0 #000;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            color: #4ecca3;
+            font-size: 8px;
+            text-shadow: 1px 1px 0 #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+    <div class="hud">
+        <div>LV <span id="level">1</span> | XP: <span id="xp">0</span></div>
+        <div>Streak: <span id="streak">0</span> 🔥</div>
+    </div>
+    <div class="controls">WASD to move | E to interact</div>
+
+    <script>
+        console.log('🎮 Emergency Backup Version Starting...');
+
+        // Canvas setup
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            console.log('Canvas:', canvas.width, 'x', canvas.height);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Game state
+        const game = {
+            player: {
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                width: 32,
+                height: 32,
+                color: '#FF6B9D',
+                speed: 150
+            },
+            objects: [
+                { x: 150, y: 150, w: 64, h: 64, color: '#C06C84', name: 'TASK\nMACHINE' },
+                { x: canvas.width - 150, y: 150, w: 64, h: 64, color: '#6C5B7B', name: 'MIRROR' },
+                { x: canvas.width / 2, y: canvas.height / 2 - 100, w: 64, h: 64, color: '#ffd93d', name: 'ROULETTE' },
+                { x: canvas.width / 2, y: canvas.height - 100, w: 80, h: 48, color: '#355C7D', name: 'COUCH' }
+            ],
+            xp: 0,
+            level: 1,
+            streak: 0,
+            nearObject: null
+        };
+
+        // Input
+        const keys = {};
+        window.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key.toLowerCase() === 'e' && game.nearObject) {
+                alert(`You interacted with ${game.nearObject.name}!`);
+                game.xp += 15;
+                updateHUD();
+            }
+        });
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        // Update HUD
+        function updateHUD() {
+            document.getElementById('level').textContent = game.level;
+            document.getElementById('xp').textContent = game.xp;
+            document.getElementById('streak').textContent = game.streak;
+        }
+
+        // Game loop
+        let lastTime = performance.now();
+
+        function gameLoop(currentTime) {
+            const dt = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            // Update player
+            let vx = 0, vy = 0;
+            if (keys['w'] || keys['arrowup']) vy = -1;
+            if (keys['s'] || keys['arrowdown']) vy = 1;
+            if (keys['a'] || keys['arrowleft']) vx = -1;
+            if (keys['d'] || keys['arrowright']) vx = 1;
+
+            if (vx !== 0 && vy !== 0) {
+                vx *= 0.707;
+                vy *= 0.707;
+            }
+
+            game.player.x += vx * game.player.speed * dt;
+            game.player.y += vy * game.player.speed * dt;
+
+            // Bounds
+            game.player.x = Math.max(16, Math.min(game.player.x, canvas.width - 16));
+            game.player.y = Math.max(16, Math.min(game.player.y, canvas.height - 16));
+
+            // Check near objects
+            game.nearObject = null;
+            for (let obj of game.objects) {
+                const dx = game.player.x - obj.x;
+                const dy = game.player.y - obj.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 60) {
+                    game.nearObject = obj;
+                    break;
+                }
+            }
+
+            // Draw
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 32) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 32) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Objects
+            game.objects.forEach(obj => {
+                ctx.fillStyle = obj.color;
+                ctx.fillRect(obj.x - obj.w/2, obj.y - obj.h/2, obj.w, obj.h);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(obj.x - obj.w/2, obj.y - obj.h/2, obj.w, obj.h);
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px monospace';
+                ctx.textAlign = 'center';
+                const lines = obj.name.split('\n');
+                lines.forEach((line, i) => {
+                    ctx.fillText(line, obj.x, obj.y - obj.h/2 - 15 + i*10);
+                });
+            });
+
+            // Player
+            ctx.fillStyle = game.player.color;
+            ctx.fillRect(
+                game.player.x - game.player.width/2,
+                game.player.y - game.player.height/2,
+                game.player.width,
+                game.player.height
+            );
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(
+                game.player.x - game.player.width/2,
+                game.player.y - game.player.height/2,
+                game.player.width,
+                game.player.height
+            );
+
+            // Interaction prompt
+            if (game.nearObject) {
+                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.fillRect(canvas.width/2 - 100, canvas.height - 60, 200, 40);
+                ctx.fillStyle = '#4ecca3';
+                ctx.font = '10px "Press Start 2P"';
+                ctx.textAlign = 'center';
+                ctx.fillText('Press E', canvas.width/2, canvas.height - 35);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        console.log('✅ Starting game loop...');
+        gameLoop(performance.now());
+    </script>
+</body>
+</html>
+
