@@ -9,14 +9,14 @@ class Player {
         this.y = y;
         this.width = 32;
         this.height = 32;
-        this.speed = 150; // pixels per second
+        this.speed = 250; // V2: Increased from 150 to 250
         this.direction = 'down'; // up, down, left, right
         this.color = Storage.get(Storage.keys.COSMETICS).activeColor;
 
         // Animation
         this.animFrame = 0;
         this.animTimer = 0;
-        this.animSpeed = 0.15; // seconds per frame
+        this.animSpeed = 0.12; // V2: Faster animation (was 0.15)
     }
 
     // Update player position and animation
@@ -51,69 +51,77 @@ class Player {
 
     // Draw player
     draw(ctx) {
-        // Debug output (only log once)
-        if (!this._drawLogged) {
-            console.log('👤 Drawing player at:', this.x, this.y, 'Color:', this.color);
-            this._drawLogged = true;
-        }
+        const px = Math.floor(this.x - this.width / 2);
+        const py = Math.floor(this.y - this.height / 2);
+        const frame = this.animFrame;
 
-        // Draw player sprite (placeholder for now)
+        // Body (main color from cosmetics)
         ctx.fillStyle = this.color;
-        ctx.fillRect(
-            this.x - this.width / 2,
-            this.y - this.height / 2,
-            this.width,
-            this.height
-        );
+        ctx.fillRect(px + 10, py + 8, 12, 16);
 
-        // Draw border
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-            this.x - this.width / 2,
-            this.y - this.height / 2,
-            this.width,
-            this.height
-        );
+        // Head
+        ctx.fillStyle = '#FFD1A3'; // Skin tone
+        ctx.fillRect(px + 8, py + 4, 16, 12);
 
-        // Draw direction indicator (simple triangle)
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
+        // Eyes based on direction
+        ctx.fillStyle = '#000000';
         switch(this.direction) {
             case 'up':
-                ctx.moveTo(this.x, this.y - this.height / 4);
-                ctx.lineTo(this.x - 6, this.y - this.height / 4 + 8);
-                ctx.lineTo(this.x + 6, this.y - this.height / 4 + 8);
+                // Eyes looking up
+                ctx.fillRect(px + 10, py + 6, 3, 2);
+                ctx.fillRect(px + 19, py + 6, 3, 2);
                 break;
             case 'down':
-                ctx.moveTo(this.x, this.y + this.height / 4);
-                ctx.lineTo(this.x - 6, this.y + this.height / 4 - 8);
-                ctx.lineTo(this.x + 6, this.y + this.height / 4 - 8);
+                // Eyes looking down
+                ctx.fillRect(px + 10, py + 10, 3, 2);
+                ctx.fillRect(px + 19, py + 10, 3, 2);
                 break;
             case 'left':
-                ctx.moveTo(this.x - this.width / 4, this.y);
-                ctx.lineTo(this.x - this.width / 4 + 8, this.y - 6);
-                ctx.lineTo(this.x - this.width / 4 + 8, this.y + 6);
+                // Eyes looking left
+                ctx.fillRect(px + 9, py + 8, 3, 2);
+                ctx.fillRect(px + 16, py + 8, 3, 2);
                 break;
             case 'right':
-                ctx.moveTo(this.x + this.width / 4, this.y);
-                ctx.lineTo(this.x + this.width / 4 - 8, this.y - 6);
-                ctx.lineTo(this.x + this.width / 4 - 8, this.y + 6);
+                // Eyes looking right
+                ctx.fillRect(px + 14, py + 8, 3, 2);
+                ctx.fillRect(px + 21, py + 8, 3, 2);
                 break;
         }
-        ctx.closePath();
-        ctx.fill();
 
-        // Draw hat if equipped (placeholder)
+        // Legs with walking animation
+        ctx.fillStyle = this.color;
+        if (this.direction === 'left' || this.direction === 'right') {
+            // Side-walking legs
+            ctx.fillRect(px + 10, py + 24 + (frame % 2 === 0 ? 0 : 2), 5, 8);
+            ctx.fillRect(px + 17, py + 24 + (frame % 2 === 1 ? 0 : 2), 5, 8);
+        } else {
+            // Front/back legs
+            ctx.fillRect(px + 10, py + 24 + (frame % 2), 5, 8);
+            ctx.fillRect(px + 17, py + 24 + ((frame + 1) % 2), 5, 8);
+        }
+
+        // Arms with walking animation
+        if (frame > 0) {
+            ctx.fillStyle = '#FFD1A3';
+            const armOffset = frame === 2 ? 2 : 1;
+            if (this.direction === 'left') {
+                ctx.fillRect(px + 6, py + 12 + armOffset, 4, 8);
+                ctx.fillRect(px + 22, py + 12 - armOffset, 4, 8);
+            } else if (this.direction === 'right') {
+                ctx.fillRect(px + 22, py + 12 + armOffset, 4, 8);
+                ctx.fillRect(px + 6, py + 12 - armOffset, 4, 8);
+            } else {
+                ctx.fillRect(px + 6, py + 10 + armOffset, 4, 10);
+                ctx.fillRect(px + 22, py + 10 - armOffset, 4, 10);
+            }
+        }
+
+        // Hat if equipped
         const cosmetics = Storage.get(Storage.keys.COSMETICS);
         if (cosmetics.activeHat) {
             ctx.fillStyle = '#ffd93d';
-            ctx.fillRect(
-                this.x - this.width / 3,
-                this.y - this.height / 2 - 8,
-                this.width * 0.66,
-                8
-            );
+            ctx.fillRect(px + 6, py, 20, 4);
+            ctx.fillRect(px + 8, py + 4, 16, 2);
         }
     }
 
@@ -137,4 +145,3 @@ class Player {
         Storage.set(Storage.keys.COSMETICS, cosmetics);
     }
 }
-
