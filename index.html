@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+    <meta name="theme-color" content="#355C7D">
+    <title>Procrastination Arcade</title>
+
+    <!-- Google Fonts - Press Start 2P for pixel aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loading.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <h1 class="pixel-title">PROCRASTINATION<br>ARCADE</h1>
+            <div class="loading-bar-container">
+                <div id="loading-bar" class="loading-bar"></div>
+            </div>
+            <p id="loading-text" class="loading-text">Loading assets...</p>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container" class="game-container hidden">
+        <!-- Canvas -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- HUD Overlay -->
+        <div id="hud" class="hud">
+            <div class="hud-top">
+                <div class="hud-left">
+                    <div class="level-badge">LV <span id="player-level">1</span></div>
+                    <div class="xp-container">
+                        <div class="xp-bar-bg">
+                            <div id="xp-bar" class="xp-bar"></div>
+                        </div>
+                        <span id="xp-text" class="xp-text">0 / 100</span>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="streak-counter">
+                        <span id="streak-count">0</span> 🔥
+                    </div>
+                    <button id="customize-button" class="customize-button" title="Customize">🎨</button>
+                </div>
+            </div>
+
+            <div class="hud-bottom">
+                <div id="active-task" class="active-task hidden">
+                    <span class="task-label">CURRENT TASK:</span>
+                    <span id="task-text" class="task-text"></span>
+                </div>
+                <div id="interaction-prompt" class="interaction-prompt hidden">
+                    Press <kbd>E</kbd> to interact
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div id="mobile-controls" class="mobile-controls hidden">
+            <div id="joystick-container" class="joystick-container">
+                <div id="joystick-base" class="joystick-base"></div>
+                <div id="joystick-stick" class="joystick-stick"></div>
+            </div>
+            <button id="interact-button" class="interact-button" disabled>E</button>
+        </div>
+
+        <!-- Modal Overlay -->
+        <div id="modal-overlay" class="modal-overlay hidden">
+            <div id="modal-content" class="modal-content">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/dialogue.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/loader.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
+

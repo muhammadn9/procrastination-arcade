@@ -1,0 +1,15 @@
+# IDE
+*.log
+# Logs
+
+node_modules/
+# Dependencies
+
+Thumbs.db
+.DS_Store
+# OS
+
+.vscode/
+*.iml
+.idea/
+
