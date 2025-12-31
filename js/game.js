@@ -402,7 +402,7 @@ const Game = {
             return;
         }
 
-        const today = new Date().toDateString();
+        const today = new Date().toISOString().split('T')[0];
         const todayTasks = Storage.get('todayTasks_' + today) || [];
 
         todayTasks.push({
