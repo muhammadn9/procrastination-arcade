@@ -398,7 +398,9 @@ const Game = {
     logDeskTask() {
         const input = document.getElementById('desk-task-input');
         if (!input || !input.value.trim()) {
-            alert('Please enter a task to log!');
+            UI.showModal('ERROR', 'Please enter a task to log!', [
+                { text: 'OK', onClick: () => {} }
+            ]);
             return;
         }
 
@@ -419,7 +421,9 @@ const Game = {
 
         // Show success message
         if (result.leveledUp) {
-            alert(`Task logged! +5 XP\n🎉 LEVEL UP! You're now level ${result.newLevel}!`);
+            UI.showModal('LEVEL UP!', `Task logged! +5 XP<br>🎉 LEVEL UP! You're now level ${result.newLevel}!`, [
+                { text: 'Awesome!', onClick: () => {} }
+            ]);
             UI.celebrateLevelUp(result.newLevel);
         } else {
             // Reopen the modal with updated list
