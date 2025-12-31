@@ -328,7 +328,7 @@ const Game = {
     // V2: Show Desk Task Logging Interface
     showDeskTaskLog() {
         const today = new Date().toDateString();
-        const todayTasks = Storage.get('todayTasks_' + today) || [];
+        const todayTasks = Storage.getDailyTasks(today);
 
         const taskListParts = [];
         taskListParts.push('<div style="max-height: 200px; overflow-y: auto; margin: 16px 0; text-align: left;">');
@@ -403,15 +403,7 @@ const Game = {
         }
 
         const today = new Date().toDateString();
-        const todayTasks = Storage.get('todayTasks_' + today) || [];
-
-        todayTasks.push({
-            text: input.value.trim(),
-            time: new Date().toLocaleTimeString(),
-            date: today
-        });
-
-        Storage.set('todayTasks_' + today, todayTasks);
+        Storage.addDailyTask(today, input.value.trim());
 
         // Add XP reward
         const result = Storage.addXP(5);
@@ -437,7 +429,7 @@ const Game = {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             const dateStr = date.toDateString();
-            const tasks = Storage.get('todayTasks_' + dateStr) || [];
+            const tasks = Storage.getDailyTasks(dateStr);
 
             if (tasks.length > 0) {
                 last7Days.push({
