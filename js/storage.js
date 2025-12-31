@@ -286,6 +286,9 @@ const Storage = {
             const dateStr = key.substring(this.keys.DAILY_TASKS_PREFIX.length);
             const taskDate = new Date(dateStr);
 
+            // Skip invalid dates
+            if (isNaN(taskDate.getTime())) return;
+
             // Calculate age in days
             const ageInDays = Math.floor((today - taskDate) / (1000 * 60 * 60 * 24));
 
