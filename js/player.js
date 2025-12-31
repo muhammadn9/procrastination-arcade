@@ -100,20 +100,18 @@ class Player {
             ctx.fillRect(px + 17, py + 24 + ((frame + 1) % 2), 5, 8);
         }
 
-        // Arms with walking animation
-        if (frame > 0) {
-            ctx.fillStyle = '#FFD1A3';
-            const armOffset = frame === 2 ? 2 : 1;
-            if (this.direction === 'left') {
-                ctx.fillRect(px + 6, py + 12 + armOffset, 4, 8);
-                ctx.fillRect(px + 22, py + 12 - armOffset, 4, 8);
-            } else if (this.direction === 'right') {
-                ctx.fillRect(px + 22, py + 12 + armOffset, 4, 8);
-                ctx.fillRect(px + 6, py + 12 - armOffset, 4, 8);
-            } else {
-                ctx.fillRect(px + 6, py + 10 + armOffset, 4, 10);
-                ctx.fillRect(px + 22, py + 10 - armOffset, 4, 10);
-            }
+        // Arms with walking animation (always rendered; neutral when idle)
+        ctx.fillStyle = '#FFD1A3';
+        const armOffset = frame === 0 ? 0 : (frame === 2 ? 2 : 1);
+        if (this.direction === 'left') {
+            ctx.fillRect(px + 6, py + 12 + armOffset, 4, 8);
+            ctx.fillRect(px + 22, py + 12 - armOffset, 4, 8);
+        } else if (this.direction === 'right') {
+            ctx.fillRect(px + 22, py + 12 + armOffset, 4, 8);
+            ctx.fillRect(px + 6, py + 12 - armOffset, 4, 8);
+        } else {
+            ctx.fillRect(px + 6, py + 10 + armOffset, 4, 10);
+            ctx.fillRect(px + 22, py + 10 - armOffset, 4, 10);
         }
 
         // Hat if equipped
