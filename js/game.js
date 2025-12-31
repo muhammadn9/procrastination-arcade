@@ -420,7 +420,6 @@ const Game = {
         // Show success message
         if (result.leveledUp) {
             alert(`Task logged! +5 XP\n🎉 LEVEL UP! You're now level ${result.newLevel}!`);
-            UI.celebrateLevelUp(result.newLevel);
         } else {
             // Reopen the modal with updated list
             this.showDeskTaskLog();
