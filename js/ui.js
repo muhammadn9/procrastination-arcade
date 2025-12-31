@@ -215,7 +215,7 @@ const UI = {
                     navigator.clipboard.writeText(shareText).then(() => {
                         // Close current modal first
                         this.hideModal();
-                        // Show success notification
+                        // Show success notification after brief delay to allow modal to close smoothly
                         setTimeout(() => {
                             this.showModal('✅ COPIED!', '<p>Share text copied to clipboard!</p>', [
                                 { text: 'Great!', onClick: () => {} }
