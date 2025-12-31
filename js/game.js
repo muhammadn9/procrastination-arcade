@@ -399,7 +399,7 @@ const Game = {
         const input = document.getElementById('desk-task-input');
         if (!input || !input.value.trim()) {
             UI.showModal('ERROR', 'Please enter a task to log!', [
-                { text: 'OK', onClick: () => { Game.showDeskTaskLog(); } }
+                { text: 'OK', onClick: () => {} }
             ]);
             return;
         }
