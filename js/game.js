@@ -385,11 +385,11 @@ const Game = {
             const input = document.getElementById('desk-task-input');
             if (input) {
                 input.focus();
-                input.addEventListener('keypress', (e) => {
+                input.onkeypress = (e) => {
                     if (e.key === 'Enter') {
                         this.logDeskTask();
                     }
-                });
+                };
             }
         }, 100);
     },
