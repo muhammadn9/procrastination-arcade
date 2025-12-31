@@ -13,7 +13,8 @@ const Storage = {
         COSMETICS: 'cosmetics',
         ACTIVE_TASKS: 'activeTasks',
         CUSTOM_TASKS: 'customTasks',
-        HISTORY: 'history'
+        HISTORY: 'history',
+        DAILY_TASKS_PREFIX: 'todayTasks_' // Prefix for daily task keys
     },
 
     // Initialize default game state
@@ -68,8 +69,13 @@ const Storage = {
     // Clear all game data
     clear() {
         Object.values(this.keys).forEach(key => {
-            localStorage.removeItem(key);
+            // Skip the prefix constant
+            if (key !== this.keys.DAILY_TASKS_PREFIX) {
+                localStorage.removeItem(key);
+            }
         });
+        // Also clear all daily task entries
+        this.clearAllDailyTasks();
         this.init();
     },
 
@@ -232,6 +238,72 @@ const Storage = {
         const customTasks = this.get(this.keys.CUSTOM_TASKS);
         const filtered = customTasks.filter(t => t.id !== taskId);
         this.set(this.keys.CUSTOM_TASKS, filtered);
+    },
+
+    // Daily Task Logging
+    getDailyTasksKey(date) {
+        // Generate key for a specific date
+        return this.keys.DAILY_TASKS_PREFIX + date;
+    },
+
+    getDailyTasks(date) {
+        // Get tasks for a specific date
+        const key = this.getDailyTasksKey(date);
+        return this.get(key) || [];
+    },
+
+    addDailyTask(date, taskText) {
+        // Add a task to a specific date
+        const tasks = this.getDailyTasks(date);
+        tasks.push({
+            text: taskText,
+            time: new Date().toLocaleTimeString(),
+            date: date
+        });
+        const key = this.getDailyTasksKey(date);
+        this.set(key, tasks);
+    },
+
+    getAllDailyTaskKeys() {
+        // Get all keys that match the daily tasks prefix
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(this.keys.DAILY_TASKS_PREFIX)) {
+                keys.push(key);
+            }
+        }
+        return keys;
+    },
+
+    clearOldDailyTasks(daysToKeep = 30) {
+        // Remove daily task entries older than the specified number of days
+        const today = new Date();
+        const allKeys = this.getAllDailyTaskKeys();
+
+        allKeys.forEach(key => {
+            // Extract date from key (format: todayTasks_DateString)
+            const dateStr = key.substring(this.keys.DAILY_TASKS_PREFIX.length);
+            const taskDate = new Date(dateStr);
+
+            // Skip invalid dates
+            if (isNaN(taskDate.getTime())) return;
+
+            // Calculate age in days
+            const ageInDays = Math.floor((today - taskDate) / (1000 * 60 * 60 * 24));
+
+            if (ageInDays > daysToKeep) {
+                localStorage.removeItem(key);
+            }
+        });
+    },
+
+    clearAllDailyTasks() {
+        // Remove all daily task entries
+        const allKeys = this.getAllDailyTaskKeys();
+        allKeys.forEach(key => {
+            localStorage.removeItem(key);
+        });
     }
 };
 
