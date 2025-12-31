@@ -24,7 +24,7 @@ class World {
             height: 60,
             color: '#D32F2F', // Red
             interactDistance: 50,
-            onInteract: () => {} // Silent couch
+            onInteract: () => {} // No interaction for couch currently
         });
 
         this.objects.push({
