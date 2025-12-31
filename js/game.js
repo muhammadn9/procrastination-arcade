@@ -398,7 +398,9 @@ const Game = {
     logDeskTask() {
         const input = document.getElementById('desk-task-input');
         if (!input || !input.value.trim()) {
-            alert('Please enter a task to log!');
+            UI.showModal('ERROR', 'Please enter a task to log!', [
+                { text: 'OK', onClick: () => {} }
+            ]);
             return;
         }
 
