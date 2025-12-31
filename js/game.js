@@ -330,22 +330,24 @@ const Game = {
         const today = new Date().toDateString();
         const todayTasks = Storage.get('todayTasks_' + today) || [];
 
-        let taskListHTML = '<div style="max-height: 200px; overflow-y: auto; margin: 16px 0; text-align: left;">';
+        const taskListParts = [];
+        taskListParts.push('<div style="max-height: 200px; overflow-y: auto; margin: 16px 0; text-align: left;">');
         if (todayTasks.length === 0) {
-            taskListHTML += '<p style="color: #b0b0b0; font-size: 10px;">No tasks logged today yet. Start being productive!</p>';
+            taskListParts.push('<p style="color: #b0b0b0; font-size: 10px;">No tasks logged today yet. Start being productive!</p>');
         } else {
             todayTasks.forEach((task, index) => {
-                taskListHTML += `
+                taskListParts.push(`
                     <div style="background: rgba(255,255,255,0.1); padding: 8px; margin: 4px 0; font-size: 10px; border-left: 3px solid #4ecca3;">
                         <strong>${index + 1}.</strong> ${task.text}
                         <div style="color: #4ecca3; font-size: 8px; margin-top: 4px;">
                             ✓ Done at ${task.time}
                         </div>
                     </div>
-                `;
+                `);
             });
         }
-        taskListHTML += '</div>';
+        taskListParts.push('</div>');
+        const taskListHTML = taskListParts.join('');
 
         const content = `
             <p style="margin-bottom: 12px;">📝 What did you accomplish today?</p>
