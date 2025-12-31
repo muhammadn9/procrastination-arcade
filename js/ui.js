@@ -213,7 +213,14 @@ const UI = {
                 class: 'btn-success',
                 onClick: () => {
                     navigator.clipboard.writeText(shareText).then(() => {
-                        alert('Copied to clipboard!');
+                        // Close current modal first
+                        this.hideModal();
+                        // Show success notification
+                        setTimeout(() => {
+                            this.showModal('✅ COPIED!', '<p>Share text copied to clipboard!</p>', [
+                                { text: 'Great!', onClick: () => {} }
+                            ]);
+                        }, 100);
                     });
                 }
             },
