@@ -385,11 +385,11 @@ const Game = {
             const input = document.getElementById('desk-task-input');
             if (input) {
                 input.focus();
-                input.addEventListener('keypress', (e) => {
+                input.onkeypress = (e) => {
                     if (e.key === 'Enter') {
                         this.logDeskTask();
                     }
-                });
+                };
             }
         }, 100);
     },
@@ -402,8 +402,16 @@ const Game = {
             return;
         }
 
-        const today = new Date().toDateString();
-        Storage.addDailyTask(today, input.value.trim());
+        const today = new Date().toISOString().split('T')[0];
+        const todayTasks = Storage.get('todayTasks_' + today) || [];
+
+        todayTasks.push({
+            text: input.value.trim(),
+            time: new Date().toLocaleTimeString(),
+            date: today
+        });
+
+        Storage.set('todayTasks_' + today, todayTasks);
 
         // Add XP reward
         const result = Storage.addXP(5);
@@ -412,7 +420,6 @@ const Game = {
         // Show success message
         if (result.leveledUp) {
             alert(`Task logged! +5 XP\n🎉 LEVEL UP! You're now level ${result.newLevel}!`);
-            UI.celebrateLevelUp(result.newLevel);
         } else {
             // Reopen the modal with updated list
             this.showDeskTaskLog();
@@ -439,35 +446,37 @@ const Game = {
             }
         }
 
-        let historyHTML = '<div style="max-height: 300px; overflow-y: auto; text-align: left;">';
+        const historyParts = [];
+        historyParts.push('<div style="max-height: 300px; overflow-y: auto; text-align: left;">');
 
         if (last7Days.length === 0) {
-            historyHTML += '<p style="color: #b0b0b0; font-size: 10px;">No task history yet. Start logging your accomplishments!</p>';
+            historyParts.push('<p style="color: #b0b0b0; font-size: 10px;">No task history yet. Start logging your accomplishments!</p>');
         } else {
             last7Days.forEach(day => {
                 const date = new Date(day.date);
                 const dateLabel = day.date === today.toDateString() ? '📅 Today' : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-                historyHTML += `
+                historyParts.push(`
                     <div style="margin-bottom: 16px;">
                         <div style="background: rgba(78, 204, 163, 0.2); padding: 6px; font-size: 10px; font-weight: bold; margin-bottom: 4px;">
                             ${dateLabel} - ${day.tasks.length} task${day.tasks.length > 1 ? 's' : ''}
                         </div>
-                `;
+                `);
 
                 day.tasks.forEach((task, idx) => {
-                    historyHTML += `
+                    historyParts.push(`
                         <div style="background: rgba(255,255,255,0.05); padding: 6px; margin: 2px 0 2px 12px; font-size: 9px; border-left: 2px solid #4ecca3;">
                             ${idx + 1}. ${task.text} <span style="color: #888;">(${task.time})</span>
                         </div>
-                    `;
+                    `);
                 });
 
-                historyHTML += '</div>';
+                historyParts.push('</div>');
             });
         }
 
-        historyHTML += '</div>';
+        historyParts.push('</div>');
+        const historyHTML = historyParts.join('');
 
         const totalTasks = last7Days.reduce((sum, day) => sum + day.tasks.length, 0);
 

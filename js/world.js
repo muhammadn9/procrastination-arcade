@@ -121,6 +121,10 @@ class World {
         ctx.fillRect(0, 0, width, height);
 
         // V2: Draw room backgrounds based on home layout
+        // Bathroom (White - Center) - Draw first to avoid overlap
+        ctx.fillStyle = 'rgba(245, 245, 245, 0.15)';
+        ctx.fillRect(width*0.7, height*0.35, width*0.25, height*0.3);
+
         // Living Room (Red - Top Left)
         ctx.fillStyle = 'rgba(211, 47, 47, 0.1)';
         ctx.fillRect(0, 0, width/2, height/2);
@@ -136,10 +140,6 @@ class World {
         // Desk Area (Pink - Bottom Right)
         ctx.fillStyle = 'rgba(233, 30, 99, 0.1)';
         ctx.fillRect(width/2, height/2, width/2, height/2);
-
-        // Bathroom (White - Center)
-        ctx.fillStyle = 'rgba(245, 245, 245, 0.15)';
-        ctx.fillRect(width*0.7, height*0.35, width*0.25, height*0.3);
 
         // Draw grid pattern
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
