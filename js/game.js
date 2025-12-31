@@ -422,7 +422,7 @@ const Game = {
         // Show success message
         if (result.leveledUp) {
             UI.showModal('LEVEL UP!', `Task logged! +5 XP<br>🎉 LEVEL UP! You're now level ${result.newLevel}!`, [
-                { text: 'Awesome!', onClick: () => {} }
+                { text: 'Awesome!', onClick: () => { this.showDeskTaskLog(); } }
             ]);
             UI.celebrateLevelUp(result.newLevel);
         } else {
