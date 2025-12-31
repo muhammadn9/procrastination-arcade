@@ -321,21 +321,184 @@ const Game = {
                 }
             ];
 
-            UI.showModal('FATE HAS SPOKEN', resultContent, buttons);
+            UI.showModal('ROULETTE RESULT', resultContent, buttons);
         }, 2000);
     },
 
-    // Pause game
-    pause() {
-        this.running = false;
+    // V2: Show Desk Task Logging Interface
+    showDeskTaskLog() {
+        const today = new Date().toDateString();
+        const todayTasks = Storage.get('todayTasks_' + today) || [];
+
+        const taskListParts = [];
+        taskListParts.push('<div style="max-height: 200px; overflow-y: auto; margin: 16px 0; text-align: left;">');
+        if (todayTasks.length === 0) {
+            taskListParts.push('<p style="color: #b0b0b0; font-size: 10px;">No tasks logged today yet. Start being productive!</p>');
+        } else {
+            todayTasks.forEach((task, index) => {
+                taskListParts.push(`
+                    <div style="background: rgba(255,255,255,0.1); padding: 8px; margin: 4px 0; font-size: 10px; border-left: 3px solid #4ecca3;">
+                        <strong>${index + 1}.</strong> ${task.text}
+                        <div style="color: #4ecca3; font-size: 8px; margin-top: 4px;">
+                            ✓ Done at ${task.time}
+                        </div>
+                    </div>
+                `);
+            });
+        }
+        taskListParts.push('</div>');
+        const taskListHTML = taskListParts.join('');
+
+        const content = `
+            <p style="margin-bottom: 12px;">📝 What did you accomplish today?</p>
+            ${taskListHTML}
+            <input
+                type="text"
+                id="desk-task-input"
+                placeholder="e.g., Finished project proposal, Cleaned desk..."
+                style="width: 100%; padding: 8px; margin: 16px 0; font-family: monospace; font-size: 12px; background: #2a2a3e; color: white; border: 2px solid #4ecca3; box-sizing: border-box;"
+                maxlength="100"
+            />
+            <p style="font-size: 8px; color: #b0b0b0;">Press Enter or click button to log task</p>
+        `;
+
+        const buttons = [
+            {
+                text: '✅ Log Task (+5 XP)',
+                class: 'btn-success',
+                onClick: () => this.logDeskTask()
+            },
+            {
+                text: '📜 View History',
+                onClick: () => this.showTaskHistory()
+            },
+            {
+                text: 'Close',
+                onClick: () => {}
+            }
+        ];
+
+        UI.showModal('DESK - TASK LOG', content, buttons);
+
+        // Focus input and add Enter key handler
+        setTimeout(() => {
+            const input = document.getElementById('desk-task-input');
+            if (input) {
+                input.focus();
+                input.onkeypress = (e) => {
+                    if (e.key === 'Enter') {
+                        this.logDeskTask();
+                    }
+                };
+            }
+        }, 100);
     },
 
-    // Resume game
-    resume() {
-        this.running = true;
-        this.lastTime = performance.now();
-        this.gameLoop(this.lastTime);
-    }
+    // V2: Log a task at the desk
+    logDeskTask() {
+        const input = document.getElementById('desk-task-input');
+        if (!input || !input.value.trim()) {
+            alert('Please enter a task to log!');
+            return;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        const todayTasks = Storage.get('todayTasks_' + today) || [];
+
+        todayTasks.push({
+            text: input.value.trim(),
+            time: new Date().toLocaleTimeString(),
+            date: today
+        });
+
+        Storage.set('todayTasks_' + today, todayTasks);
+
+        // Add XP reward
+        const result = Storage.addXP(5);
+        UI.updateHUD();
+
+        // Show success message
+        if (result.leveledUp) {
+            alert(`Task logged! +5 XP\n🎉 LEVEL UP! You're now level ${result.newLevel}!`);
+        } else {
+            // Reopen the modal with updated list
+            this.showDeskTaskLog();
+        }
+    },
+
+    // V2: Show task history across multiple days
+    showTaskHistory() {
+        const last7Days = [];
+        const today = new Date();
+
+        // Get last 7 days of tasks
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toDateString();
+            const tasks = Storage.get('todayTasks_' + dateStr) || [];
+
+            if (tasks.length > 0) {
+                last7Days.push({
+                    date: dateStr,
+                    tasks: tasks
+                });
+            }
+        }
+
+        const historyParts = [];
+        historyParts.push('<div style="max-height: 300px; overflow-y: auto; text-align: left;">');
+
+        if (last7Days.length === 0) {
+            historyParts.push('<p style="color: #b0b0b0; font-size: 10px;">No task history yet. Start logging your accomplishments!</p>');
+        } else {
+            last7Days.forEach(day => {
+                const date = new Date(day.date);
+                const dateLabel = day.date === today.toDateString() ? '📅 Today' : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+                historyParts.push(`
+                    <div style="margin-bottom: 16px;">
+                        <div style="background: rgba(78, 204, 163, 0.2); padding: 6px; font-size: 10px; font-weight: bold; margin-bottom: 4px;">
+                            ${dateLabel} - ${day.tasks.length} task${day.tasks.length > 1 ? 's' : ''}
+                        </div>
+                `);
+
+                day.tasks.forEach((task, idx) => {
+                    historyParts.push(`
+                        <div style="background: rgba(255,255,255,0.05); padding: 6px; margin: 2px 0 2px 12px; font-size: 9px; border-left: 2px solid #4ecca3;">
+                            ${idx + 1}. ${task.text} <span style="color: #888;">(${task.time})</span>
+                        </div>
+                    `);
+                });
+
+                historyParts.push('</div>');
+            });
+        }
+
+        historyParts.push('</div>');
+        const historyHTML = historyParts.join('');
+
+        const totalTasks = last7Days.reduce((sum, day) => sum + day.tasks.length, 0);
+
+        const content = `
+            <p style="margin-bottom: 12px;">📊 Your Recent Accomplishments</p>
+            <p style="font-size: 10px; color: #4ecca3; margin-bottom: 12px;">Total: ${totalTasks} tasks logged in the last 7 days</p>
+            ${historyHTML}
+        `;
+
+        const buttons = [
+            {
+                text: '← Back to Desk',
+                onClick: () => this.showDeskTaskLog()
+            },
+            {
+                text: 'Close',
+                onClick: () => {}
+            }
+        ];
+
+        UI.showModal('TASK HISTORY', content, buttons);
+    },
 };
 
 console.log('✅ Game object created:', typeof Game, Game);

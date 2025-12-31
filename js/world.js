@@ -9,58 +9,98 @@ class World {
         this.setupObjects(canvasWidth, canvasHeight);
     }
 
-    // Setup interactive objects in the world
+    // Setup interactive objects in custom home layout
     setupObjects(canvasWidth, canvasHeight) {
-        // Task Machine (top-left area)
+        const w = canvasWidth;
+        const h = canvasHeight;
+
+        // LIVING ROOM (Red area - Top Left) - Couch & TV
         this.objects.push({
-            id: 'taskMachine',
-            name: 'Task Machine',
-            x: 150,
-            y: 150,
-            width: 64,
-            height: 64,
-            color: '#C06C84',
+            id: 'couch',
+            name: 'Couch',
+            x: w * 0.15,
+            y: h * 0.25,
+            width: 100,
+            height: 60,
+            color: '#D32F2F', // Red
             interactDistance: 50,
-            onInteract: () => Game.showTaskMachine()
+            onInteract: () => {} // No interaction for couch currently
         });
 
-        // Mirror (top-right area)
         this.objects.push({
-            id: 'mirror',
-            name: 'Mirror',
-            x: canvasWidth - 150,
-            y: 150,
-            width: 64,
-            height: 64,
-            color: '#6C5B7B',
-            interactDistance: 50,
-            onInteract: () => Game.showMirror()
-        });
-
-        // Roulette Wheel (center)
-        this.objects.push({
-            id: 'roulette',
-            name: 'Roulette Wheel',
-            x: canvasWidth / 2,
-            y: canvasHeight / 2,
-            width: 64,
-            height: 64,
-            color: '#ffd93d',
+            id: 'tv',
+            name: 'TV',
+            x: w * 0.15,
+            y: h * 0.12,
+            width: 80,
+            height: 50,
+            color: '#1a1a1a',
             interactDistance: 50,
             onInteract: () => Game.showRoulette()
         });
 
-        // Couch (bottom area) - Does nothing on purpose
+        // KITCHEN (Blue area - Top Right) - Fridge
         this.objects.push({
-            id: 'couch',
-            name: 'Couch',
-            x: canvasWidth / 2,
-            y: canvasHeight - 100,
-            width: 80,
-            height: 48,
-            color: '#355C7D',
+            id: 'fridge',
+            name: 'Fridge',
+            x: w * 0.85,
+            y: h * 0.2,
+            width: 60,
+            height: 80,
+            color: '#1976D2', // Blue
             interactDistance: 50,
-            onInteract: () => {} // Silent. Always.
+            onInteract: () => Game.showTaskMachine()
+        });
+
+        // BEDROOM (Green area - Bottom Left) - Bed
+        this.objects.push({
+            id: 'bed',
+            name: 'Bed',
+            x: w * 0.15,
+            y: h * 0.8,
+            width: 120,
+            height: 80,
+            color: '#388E3C', // Green
+            interactDistance: 50,
+            onInteract: () => Game.showMirror()
+        });
+
+        // DESK/CLOSET AREA (Pink area - Bottom Right)
+        this.objects.push({
+            id: 'desk',
+            name: 'Desk',
+            x: w * 0.75,
+            y: h * 0.8,
+            width: 80,
+            height: 60,
+            color: '#E91E63', // Pink
+            interactDistance: 50,
+            onInteract: () => Game.showDeskTaskLog() // V2: New desk task logging
+        });
+
+        this.objects.push({
+            id: 'closet',
+            name: 'Closet',
+            x: w * 0.9,
+            y: h * 0.8,
+            width: 60,
+            height: 80,
+            color: '#C2185B', // Darker pink
+            interactDistance: 50,
+            onInteract: () => UI.showCustomizationMenu()
+        });
+
+        // BATHROOM (White area - Center) - Mirror
+        this.objects.push({
+            id: 'mirror',
+            name: 'Mirror',
+            x: w * 0.85,
+            y: h * 0.5,
+            width: 60,
+            height: 80,
+            color: '#F5F5F5', // White/Light gray
+            interactDistance: 50,
+            onInteract: () => Game.showMirror()
         });
     }
 
@@ -79,6 +119,27 @@ class World {
         // Draw floor
         ctx.fillStyle = '#1a1a2e';
         ctx.fillRect(0, 0, width, height);
+
+        // V2: Draw room backgrounds based on home layout
+        // Living Room (Red - Top Left)
+        ctx.fillStyle = 'rgba(211, 47, 47, 0.1)';
+        ctx.fillRect(0, 0, width/2, height/2);
+
+        // Kitchen (Blue - Top Right)
+        ctx.fillStyle = 'rgba(25, 118, 210, 0.1)';
+        ctx.fillRect(width/2, 0, width/2, height/2);
+
+        // Bedroom (Green - Bottom Left)
+        ctx.fillStyle = 'rgba(56, 142, 60, 0.1)';
+        ctx.fillRect(0, height/2, width/2, height/2);
+
+        // Desk Area (Pink - Bottom Right)
+        ctx.fillStyle = 'rgba(233, 30, 99, 0.1)';
+        ctx.fillRect(width/2, height/2, width/2, height/2);
+
+        // Bathroom (White - Center)
+        ctx.fillStyle = 'rgba(245, 245, 245, 0.15)';
+        ctx.fillRect(width*0.7, height*0.35, width*0.25, height*0.3);
 
         // Draw grid pattern
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
@@ -182,4 +243,3 @@ class World {
         });
     }
 }
-
